@@ -1,14 +1,19 @@
 import { useState } from "react"
 
-export default function AddTodoForm() {
+interface AddTodoFormProps {
+    onSubmit: (title: string) => void;
+}
+
+export default function AddTodoForm({ onSubmit }: AddTodoFormProps) {
     const [input, setInput] = useState("")
 
     const handleSumit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // if (!input.trim) {
 
-        // }
+        if (!input.trim()) return;
 
+        onSubmit(input);
+        setInput("");
     }
 
 

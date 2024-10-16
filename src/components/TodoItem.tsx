@@ -3,12 +3,13 @@ import { Todo } from "../types/todo";
 interface TodoItemProps {
     todo: Todo,
     onCompletedChange: (id: number, completed: boolean) => void
+    onDelete: (id: number) => void;
 }
 
-export default function TodoItem({ todo, onCompletedChange }: TodoItemProps) {
+export default function TodoItem({ todo, onCompletedChange, onDelete }: TodoItemProps) {
     return (
-        <div>
-            <label className="flex items-center gap-2 border rounded-md p-2 border-gray-100 bg-white. hover:bg-slate-200">
+        <div className="flex items-center gap-1">
+            <label className="flex items-center gap-2 border rounded-md p-2 border-gray-100 bg-white. hover:bg-slate-200 grow bg-white">
                 <input
                     type="checkbox"
                     className="scale-125"
@@ -19,6 +20,14 @@ export default function TodoItem({ todo, onCompletedChange }: TodoItemProps) {
                     {todo.title}
                 </span>
             </label>
+            <button
+                onClick={() => onDelete(todo.id)}
+                className=" text-red-400 font-bold"
+
+            >
+                Delete
+            </button>
+
         </div>
     );
 };
