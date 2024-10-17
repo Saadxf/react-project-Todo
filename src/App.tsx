@@ -1,39 +1,34 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import Layout from "./Layout"
+import Home from "./Home";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
-import AddTodoForm from "./components/AddTodoForm"
-import TodoList from "./components/TodoList"
-import TodoSummary from "./components/TodoSummary"
 
-import useTodo from "./hooks/useTodo"
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "SignIn",
+        element: <SignIn />,
+      },
+      {
+        path: "SignUp",
+        element: <SignUp />,
+      },
+    ]
+  }
+])
 
 function App() {
-  const {
-    todos,
-    addTodo,
-    setTodoCompleted,
-    deletTodo,
-    deleteAllCompletedTodos,
-  } = useTodo();
-
   return (
-    <>
-      <main className="py-10 h-screen overflow-y-auto">
-        <h1 className="font-bold text-3xl text-center">Your Todos</h1>
-        <div className="max-w-lg mx-auto bg-slate-100 rounded-md p-5 space-y-6">
-          <AddTodoForm
-            onSubmit={addTodo}
-          />
-          <TodoList
-            todos={todos}
-            onCompletedChange={setTodoCompleted}
-            onDelete={deletTodo}
-          />
-        </div>
-        <TodoSummary
-          todos={todos}
-          deleteAllCompleted={deleteAllCompletedTodos}
-        />
-      </main>
-    </>
+    <RouterProvider router={router} />
   )
 }
 
