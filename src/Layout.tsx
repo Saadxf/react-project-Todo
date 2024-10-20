@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 
 export default function Layout() {
     return (
-        <>
+        <div className="flex flex-col h-screen">
             <header className="bg-gray-800 text-white p-6 text-center">
                 <h1 className="text-3xl font-bold">Welcome to Todo Manager</h1>
                 <nav className="mt-4">
@@ -13,7 +13,7 @@ export default function Layout() {
                 </nav>
             </header>
             <main className="w-full flex-grow">
-                <div className="h-screen flex items-center justify-center">
+                <div className="flex items-center justify-center">
                     <Outlet />
                 </div>
             </main>
@@ -27,7 +27,7 @@ export default function Layout() {
                     </nav>
                 </div>
             </footer>
-        </>
+        </div>
     );
 }
  
