@@ -1,4 +1,5 @@
-import { Todo } from "../types/todo";
+import { Todo } from "@/types/todo";
+
 
 interface TodoItemProps {
     todo: Todo,

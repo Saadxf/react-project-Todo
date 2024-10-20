@@ -7,48 +7,44 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { RegisterSchema } from "../schema/formSchema "
+
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input"
-import { Button } from "./ui/button";
 import { z } from "zod";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { LoginSchema } from "@/schema/formSchema ";
+import { Button } from "../ui/button";
 
-export default function RegisterForm() {
+export default function LogInForm() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const form = useForm({
-        resolver: zodResolver(RegisterSchema),
+        resolver: zodResolver(LoginSchema),
         defaultValues: {
-            name: "",
             email: "",
             password: "",
-            confirmPassword: "",
         },
     })
-    const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
+
+    const onSubmit = (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
         const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const userExists = users.some((user: { email: string; }) => user.email === data.email);
-        if (userExists) {
+        const user = users.find((user: { email: string; password: string; }) => user.email === data.email && user.password === data.password);
+        if (user) {
+            navigate("/")
+        } else {
             setLoading(false);
-            alert("User already exists");
-            return;
+            alert("Invalid email or password");
         }
-        users.push(data);
-        localStorage.setItem("users", JSON.stringify(users));
-
-        navigate("/SignIn");
-    };
-
+    }
 
     return (
         <CardWrapper
-            label="Create an account"
-            title="Register"
-            backButtontoHref="/SignIn"
+            label="Login to your account"
+            title="Login"
+            backButtontoHref="/SignUp"
             backButtononLabel="Already have account? Login here."
         >
             <Form {...form}>
@@ -56,25 +52,12 @@ export default function RegisterForm() {
                     <div className="space-y-4">
                         <FormField
                             control={form.control}
-                            name="name"
-                            render={(({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="what your name" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            ))}
-                        />
-                        <FormField
-                            control={form.control}
                             name="email"
                             render={(({ field }) => (
                                 <FormItem>
                                     <FormLabel>email</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="eaxmple@gmail.com" />
+                                        <Input {...field} type="email" placeholder="eaxmple@gmail.com" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -87,20 +70,7 @@ export default function RegisterForm() {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} placeholder="******" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            ))}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={(({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="******" />
+                                        <Input {...field} type="password" placeholder="******" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -108,7 +78,7 @@ export default function RegisterForm() {
                         />
                     </div>
                     <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? "Loading..." : "Register"}
+                        {loading ? "loading..." : "Login"}
                     </Button>
                 </form>
             </Form>

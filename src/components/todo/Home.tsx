@@ -1,7 +1,8 @@
-import AddTodoForm from "./components/AddTodoForm";
-import TodoList from "./components/TodoList";
-import TodoSummary from "./components/TodoSummary";
-import useTodo from "./hooks/useTodo";
+
+import AddTodoForm from "./AddTodoForm";
+import TodoList from "./TodoList";
+import TodoSummary from "./TodoSummary";
+import useTodo from "../../hooks/useTodo";
 
 
 
