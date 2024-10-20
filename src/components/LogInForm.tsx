@@ -27,9 +27,16 @@ export default function LogInForm() {
         },
     })
     //TODO: user auth
-    const onSumbit = (data: z.infer<typeof LoginSchema>) => {
+    const onSubmit = (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
-        console.log(data);
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const user = users.find((user: { email: string; password: string; }) => user.email === data.email && user.password === data.password);
+        if (user) {
+            window.location.href = "/"
+        } else {
+            setLoading(false);
+            alert("Invalid email or password");
+        }
     }
 
 
@@ -41,7 +48,7 @@ export default function LogInForm() {
             backButtononLabel="Already have account? Login here."
         >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSumbit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
                         <FormField
                             control={form.control}

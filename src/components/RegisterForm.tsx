@@ -16,6 +16,7 @@ import { z } from "zod";
 import { useState } from "react";
 
 
+
 export default function RegisterForm() {
     const [loading, setLoading] = useState(false)
     const form = useForm({
@@ -27,11 +28,30 @@ export default function RegisterForm() {
             confirmPassword: "",
         },
     })
-    //TODO: store data
-    const onSumbit = (data: z.infer<typeof RegisterSchema>) => {
+    const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
         setLoading(true);
-        console.log(data);
-    }
+
+        if (data.password !== data.confirmPassword) {
+            setLoading(false);
+            alert("Passwords do not match");
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem("users") || "[]");
+        const userExists = users.some((user: { email: string; }) => user.email === data.email);
+        if (userExists) {
+            setLoading(false);
+            alert("User already exists");
+            return;
+        }
+
+        users.push(data);
+        localStorage.setItem("users", JSON.stringify(users));
+
+        window.location.href = "/SignIn";
+    };
+
+
     return (
         <CardWrapper
             label="Create an account"
@@ -40,7 +60,7 @@ export default function RegisterForm() {
             backButtononLabel="Already have account? Login here."
         >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSumbit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
                         <FormField
                             control={form.control}
