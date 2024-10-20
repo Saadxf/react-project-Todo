@@ -13,7 +13,7 @@ export default function Layout() {
                 </nav>
             </header>
             <main className="w-full flex-grow">
-                <div className="flex items-center justify-center">
+                <div className="flex items-center justify-center p-6">
                     <Outlet />
                 </div>
             </main>
