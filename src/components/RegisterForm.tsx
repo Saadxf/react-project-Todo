@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "./ui/button";
 import { z } from "zod";
 import { useState } from "react";
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const form = useForm({
         resolver: zodResolver(RegisterSchema),
@@ -30,13 +30,6 @@ export default function RegisterForm() {
     })
     const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
         setLoading(true);
-
-        if (data.password !== data.confirmPassword) {
-            setLoading(false);
-            alert("Passwords do not match");
-            return;
-        }
-
         const users = JSON.parse(localStorage.getItem("users") || "[]");
         const userExists = users.some((user: { email: string; }) => user.email === data.email);
         if (userExists) {
@@ -44,11 +37,10 @@ export default function RegisterForm() {
             alert("User already exists");
             return;
         }
-
         users.push(data);
         localStorage.setItem("users", JSON.stringify(users));
 
-        window.location.href = "/SignIn";
+        navigate("/SignIn");
     };
 
 
@@ -69,7 +61,7 @@ export default function RegisterForm() {
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="text" placeholder="what your name" />
+                                        <Input {...field} placeholder="what your name" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -82,7 +74,7 @@ export default function RegisterForm() {
                                 <FormItem>
                                     <FormLabel>email</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="email" placeholder="eaxmple@gmail.com" />
+                                        <Input {...field} placeholder="eaxmple@gmail.com" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -95,7 +87,7 @@ export default function RegisterForm() {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password" placeholder="******" />
+                                        <Input {...field} placeholder="******" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -108,14 +100,14 @@ export default function RegisterForm() {
                                 <FormItem>
                                     <FormLabel>Confirm Password</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="password" placeholder="******" />
+                                        <Input {...field} placeholder="******" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             ))}
                         />
                     </div>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full" disabled={loading}>
                         {loading ? "Loading..." : "Register"}
                     </Button>
                 </form>

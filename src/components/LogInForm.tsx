@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "./ui/button";
 import { z } from "zod";
 import { useState } from "react";
-
-
+import { useNavigate } from "react-router-dom";
 
 export default function LogInForm() {
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const form = useForm({
         resolver: zodResolver(LoginSchema),
@@ -26,19 +26,18 @@ export default function LogInForm() {
             password: "",
         },
     })
-    //TODO: user auth
+
     const onSubmit = (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
         const users = JSON.parse(localStorage.getItem("users") || "[]");
         const user = users.find((user: { email: string; password: string; }) => user.email === data.email && user.password === data.password);
         if (user) {
-            window.location.href = "/"
+            navigate("/")
         } else {
             setLoading(false);
             alert("Invalid email or password");
         }
     }
-
 
     return (
         <CardWrapper
@@ -77,7 +76,7 @@ export default function LogInForm() {
                             ))}
                         />
                     </div>
-                    <Button type="submit" className="w-full">
+                    <Button type="submit" className="w-full" disabled={loading}>
                         {loading ? "loading..." : "Login"}
                     </Button>
                 </form>
