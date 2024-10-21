@@ -1,22 +1,33 @@
 import { useState, useEffect } from "react";
-import { dummayData } from "../data/todos";
-import { Todo } from "../types/todo";
+import axios from "axios";
+import { Todo } from "@/types/todo";
 
 export default function useTodo() {
-  const [todos, setTodos] = useState(() => {
-    const savedTodos: Todo[] = JSON.parse(
-      localStorage.getItem("todos") || "[]"
-    );
-    return savedTodos.length > 0 ? savedTodos : dummayData;
-  });
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+
+  const retrivedTodos = async () => {
+    try {
+      const response = await axios.get("/todos");
+      console.log(response)
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+      return [];
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+    const getAllTodos = async () => {
+      const allTodos: Todo[] = await retrivedTodos();
+      console.log(allTodos)
+    };
+    getAllTodos();
+  }, []);
 
   function setTodoCompleted(id: number, completed: boolean) {
-    setTodos((prevTodo) =>
-      prevTodo.map((todo) => (todo.id === id ? { ...todo, completed } : todo))
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === id ? { ...todo, completed } : todo))
     );
   }
 
@@ -36,14 +47,14 @@ export default function useTodo() {
   }
 
   function deleteAllCompletedTodos() {
-    setTodos((prevTodos) => prevTodos.filter((todos) => !todos.completed));
+    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
   }
 
   return {
     todos,
-    setTodoCompleted,
     addTodo,
+    setTodoCompleted,
     deletTodo,
     deleteAllCompletedTodos,
-  }
+  };
 }
