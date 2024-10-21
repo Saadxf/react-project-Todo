@@ -4,8 +4,8 @@ import TodoItem from "./TodoItem";
 
 interface TodoListProps {
     todos: Todo[];
-    onCompletedChange: (id: number, completed: boolean) => void;
-    onDelete: (id: number) => void;
+    onCompletedChange: (todo: Todo, completed: boolean) => void;
+    onDelete: (id: string) => void;
 }
 
 export default function TodoList({
@@ -13,7 +13,7 @@ export default function TodoList({
 }: TodoListProps) {
     const todosSorted = todos.sort((a, b) => {
         if (a.completed === b.completed) {
-            return b.id - a.id;
+            return Number(b.id) - Number(a.id);
         }
         return a.completed ? 1 : -1;
     })

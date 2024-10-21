@@ -33,6 +33,7 @@ export default function LogInForm() {
         const users = JSON.parse(localStorage.getItem("users") || "[]");
         const user = users.find((user: { email: string; password: string; }) => user.email === data.email && user.password === data.password);
         if (user) {
+            
             navigate("/")
         } else {
             setLoading(false);

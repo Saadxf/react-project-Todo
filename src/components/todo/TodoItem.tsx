@@ -3,8 +3,8 @@ import { Todo } from "@/types/todo";
 
 interface TodoItemProps {
     todo: Todo,
-    onCompletedChange: (id: number, completed: boolean) => void
-    onDelete: (id: number) => void;
+    onCompletedChange: (todo: Todo, completed: boolean) => void;
+    onDelete: (id: string) => void;
 }
 
 export default function TodoItem({ todo, onCompletedChange, onDelete }: TodoItemProps) {
@@ -15,7 +15,7 @@ export default function TodoItem({ todo, onCompletedChange, onDelete }: TodoItem
                     type="checkbox"
                     className="scale-125 text-blue-600 focus:ring-blue-500"
                     checked={todo.completed}
-                    onChange={(e) => onCompletedChange(todo.id, e.target.checked)}
+                    onChange={(e) => onCompletedChange(todo, e.target.checked)}
                 />
                 <span className={todo.completed ? "line-through text-gray-400" : "text-gray-800"}>
                     {todo.title}

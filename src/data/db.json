@@ -1,26 +1,17 @@
 {
   "todos": [
     {
-      "id": 1,
-      "title": "Lisk this video",
+      "id": "1729501951287",
+      "title": "test",
       "completed": false
-    },
-    {
-      "id": 2,
-      "title": "Subscribe to coding in flow",
-      "completed": false
-    },
-    {
-      "id": 3,
-      "title": "Leave a nice comment",
-      "completed": true
     }
   ],
-  "users":[
+  "users": [
     {
-        "name":"test1",
-        "email":"test1@gmail.com",
-        "password":"123456"
+      "name": "test1",
+      "email": "test1@gmail.com",
+      "password": "123456",
+      "id": "bacf"
     }
   ]
 }
