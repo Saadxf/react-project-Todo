@@ -8,10 +8,17 @@
   ],
   "users": [
     {
+      "id": "9019",
       "name": "test1",
       "email": "test1@gmail.com",
-      "password": "123456",
-      "id": "bacf"
+      "password": "123456"
+    },
+    {
+      "id": "5c28",
+      "name": "Saad Alharbi",
+      "email": "saadxf.alharbi@gmail.com",
+      "password": "wwwwww",
+      "confirmPassword": "wwwwww"
     }
   ]
 }

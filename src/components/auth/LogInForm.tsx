@@ -16,8 +16,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginSchema } from "@/schema/formSchema ";
 import { Button } from "../ui/button";
+import { User } from "@/types/user";
+import http from "../http/http";
+
+import { AlertCircle } from "lucide-react"
+
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
 
 export default function LogInForm() {
+    const [error, setError] = useState(false)
+    const [message, setMessage] = useState("")
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const form = useForm({
@@ -28,18 +40,26 @@ export default function LogInForm() {
         },
     })
 
-    const onSubmit = (data: z.infer<typeof LoginSchema>) => {
+    const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const user = users.find((user: { email: string; password: string; }) => user.email === data.email && user.password === data.password);
-        if (user) {
-            
-            navigate("/")
-        } else {
+        try {
+            const users = (await http.get<User[]>("/users")).data;
+            const user = users.find((user: { email: string; password: string }) => user.email === data.email && user.password === data.password);
+            if (user) {
+                navigate("/");
+            } else {
+                setError(true)
+                setMessage("Invalid email or password");
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            setError(true)
+            setMessage("An error occurred during login. Please try again.");
+        } finally {
             setLoading(false);
-            alert("Invalid email or password");
         }
-    }
+    };
+
 
     return (
         <CardWrapper
@@ -48,6 +68,13 @@ export default function LogInForm() {
             backButtontoHref="/SignUp"
             backButtononLabel="Already have account? Login here."
         >
+            {error && <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                    {message}
+                </AlertDescription>
+            </Alert>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">

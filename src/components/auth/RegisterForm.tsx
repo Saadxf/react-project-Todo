@@ -17,10 +17,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterSchema } from "@/schema/formSchema ";
 import { Button } from "../ui/button";
+import http from "../http/http";
+import { User } from "@/types/user";
+import { AlertCircle } from "lucide-react"
+
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
 
 export default function RegisterForm() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(false)
+    const [message, setMessage] = useState("")
     const form = useForm({
         resolver: zodResolver(RegisterSchema),
         defaultValues: {
@@ -30,20 +41,28 @@ export default function RegisterForm() {
             confirmPassword: "",
         },
     })
-    const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
+    const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
         setLoading(true);
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const userExists = users.some((user: { email: string; }) => user.email === data.email);
-        if (userExists) {
+        try {
+            const users = (await http.get<User[]>("/users")).data;
+            const userExists = users.some((user: User) => user.email === data.email);
+            if (userExists) {
+                setLoading(false);
+                setError(true)
+                setMessage("User already exists");
+                return;
+            }
+            const response = await http.post("/users", data);
+            navigate("/SignIn");
+            return response;
+        } catch (error) {
+            console.error("Error registering user:", error);
+        } finally {
             setLoading(false);
-            alert("User already exists");
-            return;
         }
-        users.push(data);
-        localStorage.setItem("users", JSON.stringify(users));
-
-        navigate("/SignIn");
     };
+
+
 
 
     return (
@@ -53,6 +72,13 @@ export default function RegisterForm() {
             backButtontoHref="/SignIn"
             backButtononLabel="Already have account? Login here."
         >
+            {error && <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                    {message}
+                </AlertDescription>
+            </Alert>}
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-4">
