@@ -8,11 +8,7 @@ import { useAuthStore } from "@/store";
 export function Header() {
     const auth = useAuthStore((state) => state.isAuth);
     const user = useAuthStore((state) => state.user);
-    const signout = useAuthStore((state) => {
-        state.signout();
-        localStorage.removeItem('token');
-    });
-
+    const signout = useAuthStore((state) => state.signout)
     const themes = useContext(ThemeContext);
 
     useEffect(() => {

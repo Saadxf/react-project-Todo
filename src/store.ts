@@ -12,7 +12,9 @@ export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
   isAuth: false,
   signin: (user) => set({ user, isAuth: true }),
-  signout: () => set({ user: null, isAuth: false }),
+  signout: () => {
+    localStorage.removeItem('user');
+    return set({ user: null, isAuth: false })},
 }));
 
 

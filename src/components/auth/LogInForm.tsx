@@ -40,10 +40,7 @@ export default function LogInForm() {
             password: "",
         },
     })
-    const signin = useAuthStore((state) => (user: User) => {
-        localStorage.setItem('user', JSON.stringify(user));
-        state.signin(user);
-    });
+    const signin = useAuthStore((state) => state.signin)
     const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
         try {
