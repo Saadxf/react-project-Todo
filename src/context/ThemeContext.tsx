@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, PropsWithChildren } from "react";
+import { createContext, useState, PropsWithChildren } from "react";
 
 
 type ThemeType = {

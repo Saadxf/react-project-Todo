@@ -16,7 +16,7 @@ export function Header() {
     return (
         <div className="flex w-full flex-col ">
             <header className="bg-gray-800 text-white p-6 text-center">
-                <h1 className="text-3xl font-bold">Welcome to Todo Manager</h1>
+                <h1 className="text-3xl font-bold">{auth?.isAuth ? `Welcome ${auth.user?.name}` : `Welocome to Todo manger`}</h1>
                 <nav className="mt-4">
                     {
                         auth?.isAuth ? (
