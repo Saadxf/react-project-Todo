@@ -3,7 +3,6 @@ import Layout from "./Layout"
 import Home from "./components/todo/Home";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
-import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 
 
@@ -33,9 +32,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <RouterProvider router={router} />
     </ThemeProvider>
   )
 }

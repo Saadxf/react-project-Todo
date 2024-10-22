@@ -26,7 +26,7 @@ import {
     AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert"
-import { useAuth } from "@/context/AuthContext";
+import { useAuthStore } from "@/store";
 
 export default function LogInForm() {
     const [error, setError] = useState(false)
@@ -40,7 +40,10 @@ export default function LogInForm() {
             password: "",
         },
     })
-    const { signin } = useAuth();
+    const signin = useAuthStore((state) => (user: User) => {
+        localStorage.setItem('user', JSON.stringify(user));
+        state.signin(user);
+    });
     const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
         try {

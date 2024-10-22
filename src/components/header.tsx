@@ -1,12 +1,18 @@
 
-import { AuthContext } from "../context/AuthContext";
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ThemeContext } from "@/context/ThemeContext";
+import { useAuthStore } from "@/store";
 
 export function Header() {
-    const auth = useContext(AuthContext);
+    const auth = useAuthStore((state) => state.isAuth);
+    const user = useAuthStore((state) => state.user);
+    const signout = useAuthStore((state) => {
+        state.signout();
+        localStorage.removeItem('token');
+    });
+
     const themes = useContext(ThemeContext);
 
     useEffect(() => {
@@ -16,11 +22,11 @@ export function Header() {
     return (
         <div className="flex w-full flex-col ">
             <header className="bg-gray-800 text-white p-6 text-center">
-                <h1 className="text-3xl font-bold">{auth?.isAuth ? `Welcome ${auth.user?.name}` : `Welocome to Todo manger`}</h1>
+                <h1 className="text-3xl font-bold">{auth ? `Welcome ${user?.name}` : `Welocome to Todo manger`}</h1>
                 <nav className="mt-4">
                     {
-                        auth?.isAuth ? (
-                            <Button onClick={auth.signout} asChild>
+                        auth ? (
+                            <Button onClick={() => signout} asChild>
                                 <Link to="/SignIn">Logout</Link>
                             </Button>
                         ) : <Button asChild>
