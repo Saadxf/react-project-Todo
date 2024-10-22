@@ -26,6 +26,7 @@ import {
     AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert"
+import { useAuth } from "@/context/AuthContext";
 
 export default function LogInForm() {
     const [error, setError] = useState(false)
@@ -39,13 +40,15 @@ export default function LogInForm() {
             password: "",
         },
     })
-
+    const { signin } = useAuth();
     const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
         setLoading(true);
         try {
             const users = (await http.get<User[]>("/users")).data;
             const user = users.find((user: { email: string; password: string }) => user.email === data.email && user.password === data.password);
             if (user) {
+                localStorage.setItem('user', JSON.stringify(user));
+                signin(user);
                 navigate("/");
             } else {
                 setError(true)
