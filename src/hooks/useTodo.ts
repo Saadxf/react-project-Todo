@@ -1,77 +1,74 @@
-import { useState, useEffect } from "react";
 import { Todo } from "@/types/todo";
 import http from "@/components/http/http";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function useTodo() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const queryClient = useQueryClient();
 
-  const retrivedTodos = async () => {
-    try {
-      const response = await http.get<Todo[]>("/todos");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-      
-    }
+  const getTodos = async () => {
+    // await new Promise((resolve) => setTimeout(resolve, 500));
+    const response = await http.get<Todo[]>("/todos");
+    return response.data;
   };
 
-  useEffect(() => {
-    const getAllTodos = async () => {
-      try {
-        const allTodos = await retrivedTodos();
+  const { data, isLoading } = useQuery<Todo[]>({
+    queryKey: ["todos"],
+    queryFn: getTodos,
+  });
 
-        if (allTodos) {
-          setTodos(allTodos);
-        }
-      } catch (error) {
-        console.error("Failed to retrieve todos:", error);
-      }
-    };
+  const addTodoMutation = useMutation({
+    mutationFn: (newTodo: Todo) => http.post("/todos", newTodo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
 
-    getAllTodos();
-  }, []);
+  const updateTodoMutation = useMutation({
+    mutationFn: ({ id, todo }: { id: string; todo: Todo }) =>
+      http.put(`/todos/${id}`, todo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
 
-  async function setTodoCompleted(todo: Todo, completed: boolean) {
-
-    const response = await http.put(`/todos/${todo.id}`, {...todo, completed });
-    setTodos((todos) =>
-      todos.map((td) =>
-        todo.id === td.id ? { ...td, completed: response.data.completed } : td
-      )
-    );
-  }
+  const deleteTodoMutation = useMutation({
+    mutationFn: (id: string) => http.delete(`/todos/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
 
   const addTodo = async (title: string) => {
-    const request = {
+    const newTodo: Todo = {
       id: String(Date.now()),
       title,
       completed: false,
     };
-    const response = await http.post("/todos", request);
-
-    setTodos([...todos, response.data]);
+    addTodoMutation.mutate(newTodo);
   };
 
-  async function deletTodo(id: string) {
-    const b = id.toString()
-    await http.delete(`/todos/${b}`);
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+  const setTodoCompleted = async (todos: Todo, completed: boolean) => {
+    const todo: Todo = { ...todos, completed };
+    updateTodoMutation.mutate({ id: todo.id, todo });
+  };
 
-  }
+  const deleteTodo = async (id: string) => {
+    deleteTodoMutation.mutate(id);
+  };
 
-  async function deleteAllCompletedTodos() {
-    const completedTodos = todos.filter((todo) => todo.completed);
+  const deleteAllCompletedTodos = async () => {
+    const completedTodos = data?.filter((todo) => todo.completed) || [];
     await Promise.all(
-      completedTodos.map((todo) => http.delete(`/todos/${todo.id}`))
+      completedTodos.map((todo) => deleteTodoMutation.mutate(todo.id))
     );
-    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.completed));
-  }
+  };
 
   return {
-    todos,
+    todos: data || [],
+    isLoading,
     addTodo,
     setTodoCompleted,
-    deletTodo,
+    deleteTodo,
     deleteAllCompletedTodos,
   };
 }

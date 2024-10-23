@@ -1,11 +1,5 @@
 {
-  "todos": [
-    {
-      "id": "1729501951287",
-      "title": "test",
-      "completed": false
-    }
-  ],
+  "todos": [],
   "users": [
     {
       "id": "9019",

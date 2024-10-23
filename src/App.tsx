@@ -4,9 +4,7 @@ import Home from "./components/todo/Home";
 import SignIn from "./components/auth/SignIn";
 import SignUp from "./components/auth/SignUp";
 import { ThemeProvider } from "./context/ThemeContext";
-
-
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   {
@@ -28,12 +26,15 @@ const router = createBrowserRouter([
     ]
   }
 ])
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>
   )
 }
 
